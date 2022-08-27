@@ -2,14 +2,12 @@ package com.mrmannwood.hexlauncher.home
 
 import android.app.Activity
 import android.app.WallpaperManager
+import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Context.DEVICE_POLICY_SERVICE
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.PointF
-import android.graphics.Rect
+import android.graphics.*
 import android.graphics.drawable.AdaptiveIconDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -49,11 +47,13 @@ import com.mrmannwood.hexlauncher.notifications.NotificationShadeUtil
 import com.mrmannwood.hexlauncher.settings.PreferenceKeys
 import com.mrmannwood.hexlauncher.settings.PreferencesRepository
 import com.mrmannwood.hexlauncher.settings.SettingsActivity
+import com.mrmannwood.hexlauncher.settings.permission.LockPermission
 import com.mrmannwood.launcher.R
 import com.mrmannwood.launcher.databinding.FragmentHomeBinding
 import timber.log.Timber
 import java.lang.Math.sqrt
 import kotlin.math.pow
+
 
 class HomeFragment : WidgetHostFragment(), HandleBackPressed {
 
@@ -450,12 +450,14 @@ class HomeFragment : WidgetHostFragment(), HandleBackPressed {
                         databinder.gestureContainer.x = me.x - gestureViewHalfWidth
                         databinder.gestureContainer.y = me.y - gestureViewHalfHeight
                         databinder.gestureContainer.visibility = View.VISIBLE
-                        if (now() - lastDown <= doubleTapTime) {
+                        if (now() - lastDown >= doubleTapTime) {
                             showContextMenuRunnable = makeShowContextMenuRunnable(
                                 databinder.gestureContainer
                             ).also {
                                 view.postDelayed(it, longPressTime)
                             }
+                        } else run {
+                            lockScreen(databinder.root.context)
                         }
                         lastDown = now()
                     }
@@ -568,6 +570,17 @@ class HomeFragment : WidgetHostFragment(), HandleBackPressed {
                 }
                 currentlyActive = null
             }
+        }
+    }
+
+    private fun lockScreen(ctx: Context) {
+        val das by lazy { ComponentName(ctx, LockPermission::class.java) }
+        val dpm by lazy { activity?.getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager }
+        fun isActiveAdmin(): Boolean = dpm.isAdminActive(das)
+        if (!isActiveAdmin()) {
+            Toast.makeText(ctx, "Enable device admin for this app", Toast.LENGTH_SHORT).show()
+        } else {
+            dpm.lockNow()
         }
     }
 

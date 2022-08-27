@@ -311,5 +311,9 @@
     <string name="yellow">Yellow</string>
     <string name="yellow_green">Yellow Green</string>
     <string name="no_matching_color">Unable to find matching color name</string>
+    <string name="admin_receiver_status_enabled">Access granted</string>
+    <string name="admin_receiver_status_disable_warning">Revoke admin access?</string>
+    <string name="admin_receiver_status_disabled">Access Revoked</string>
+    <string name="admin_receiver_status">%s</string>
 
 </resources>
