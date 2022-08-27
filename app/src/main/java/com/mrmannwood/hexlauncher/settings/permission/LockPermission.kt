@@ -3,7 +3,6 @@ package com.mrmannwood.hexlauncher.settings.permission
 import android.app.admin.DeviceAdminReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.UserHandle
 import android.widget.Toast
 import com.mrmannwood.launcher.R
 
