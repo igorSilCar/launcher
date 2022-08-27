@@ -457,6 +457,7 @@ class HomeFragment : WidgetHostFragment(), HandleBackPressed {
                                 view.postDelayed(it, longPressTime)
                             }
                         } else run {
+                            databinder.gestureContainer.visibility = View.GONE
                             lockScreen(databinder.root.context)
                         }
                         lastDown = now()
